@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="well">
+    
+    <h3>Login</h3>
+
+    <form method="post" name="login" role="form">
+        
+        {{ form.hidden_tag() }}
+        
+        <div class="form-group">
+            <label for="username">Username:</label><br>
+            {{ form.username(size=20, class="col-md-4") }}
+            {% for error in form.errors.username %}
+            <small>[{{ error }}]</small>
+            {% endfor %}<br>
+        </div>
+        
+        <div class="form-group">
+            <label for="email">Email:</label><br>
+            {{ form.email(size=20, class="col-md-4") }}
+            {% for error in form.errors.email %}
+            <small>[{{ error }}]</small>
+            {% endfor %}<br>
+        </div>
+        
+        <div class="form-group">
+            <label for="password">Password:</label><br>
+            {{ form.password(size=20, class="col-md-4") }}
+            {% for error in form.errors.password %}
+            <small>[{{ error }}]</small>
+            {% endfor %}<br>
+        </div>
+        
+        <div class="form-group">
+            <label for="location">Location:</label><br>
+            {{ form.location(class="col-md-4") }}
+            {% for error in form.errors.location %}
+            <small>[{{ error }}]</small>
+            {% endfor %}<br>
+        </div>
+        
+        <div class="checkbox">
+            <label>{{ form.remember_me }}Remember Me</label>
+        </div>
+        
+        <button type="submit" class="btn btn-default">Submit</button>
+    
+    </form>
+</div>
+
+{% endblock %}
+
