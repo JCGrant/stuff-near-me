@@ -1,8 +1,13 @@
-<p>{{ item.name }}</p>
-<p>{{ item.price }}</p>
-<p>{{ item.location }}</p>
-<p>{{ item.description }}</p>
-<p>{{ item.user }}</p>
-<p>{{ item.timestamp }}</p>
+<h3>{{ item.name }}</h3>
+<table class="item table table-striped table-condensed" id="item_{{ item.id }}">
+    <tr> <td>Location</td> <td>{{ item.item_location }}</td> </tr>
+    <tr> <td>Price</td> <td>£{{ item.price }}</td> </tr>
+    <tr> <td>Description</td> <td>{{ item.description }}</td> </tr>
+    <tr> <td>Posted by</td> <td>{{ item.user }}</td> </tr>
+    <tr> <td>Posted at</td> <td>{{ item.timestamp }}</td> </tr>
+    <tr> <td><a href="/vote/like/{{ item.id }}" class="vote like">Like</a></td> <td>{{ item.likes }}</td> </tr>
+    <tr> <td>Rating</td> <td>{{ item.rating }}</td> </tr>
+    <tr> <td><a href="/vote/dislike/{{ item.id }}" class="vote disllike">Dislike</a></td> <td>{{ item.dislikes }}</td> </tr>
+</table>
 <hr>
 

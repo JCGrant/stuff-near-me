@@ -1,8 +1,13 @@
 from app import db
 from datetime import datetime
+from flask.ext.sqlalchemy import BaseQuery
+from sqlalchemy_searchable import SearchQueryMixin, make_searchable
+from sqlalchemy_utils.types import TSVectorType
 
 ROLE_ADMIN = 0
 ROLE_USER = 1
+
+make_searchable()
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -30,15 +35,29 @@ class User(db.Model):
          return self.username
 
 
+class ItemQuery(BaseQuery, SearchQueryMixin):
+    pass
+
 
 class Item(db.Model):
+    query_class = ItemQuery
+    __tablenme__ = 'item'
+
     id = db.Column(db.Integer, primary_key=True)
+    
     name = db.Column(db.String(80))
-    price = db.Column(db.Integer)
+    price = db.Column(db.Float)
     description = db.Column(db.String(100))
     timestamp = db.Column(db.DateTime, default=datetime.utcnow())
+    
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     location_id = db.Column(db.Integer, db.ForeignKey('item_location.id'))
+    
+    likes = db.Column(db.Integer, default=0)
+    dislikes = db.Column(db.Integer, default=0)
+    rating = db.Column(db.Float, default=0)
+
+    search_vector = db.Column(TSVectorType('name', 'description'))
 
     def __repr__(self):
         return self.name

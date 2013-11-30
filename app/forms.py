@@ -10,7 +10,8 @@ except:
 
 class LoginForm(Form):
     username = TextField('username', validators = [Required()])
-    location  = SelectField('location', choices=user_locations, coerce=int, validators = [Required()])
+#    location  = SelectField('location', choices=user_locations, coerce=int, validators = [Required()])
+    location  = TextField('location', validators = [Required()])
     email = TextField('email', validators = [Required()])
     password = PasswordField('password', validators = [Required()])
     remember_me = BooleanField('remember_me', default = False)
@@ -25,6 +26,10 @@ except:
 class ItemForm(Form):
     name = TextField('name', validators = [Required()])
     price = TextField('email', validators = [Required()])
-    location  = SelectField('location', choices=item_locations, coerce=int, validators = [Required()])
+#    location  = SelectField('location', choices=item_locations, coerce=int, validators = [Required()])
+    location  = TextField('location', validators = [Required()])
     description = TextField('description', validators = [Required()])
 
+
+class SearchForm(Form):
+    query = TextField('query', validators = [Required()])

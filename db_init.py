@@ -19,7 +19,7 @@ db.session.commit()
 
 pw = generate_password_hash("//Fyjb572nqpr1")
 
-admin = User(username="JCGrant", email="jamescolin.grant@gmail.com", password=pw, role=0)
+admin = User(username="JCGrant", email="jamescolin.grant@gmail.com", password=pw, location_id=1, role=0)
 
 db.session.add(admin)
 db.session.commit()

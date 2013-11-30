@@ -15,19 +15,19 @@
             <small>[{{ error }}]</small>
             {% endfor %}<br>
         </div>
-        
+       
+        <div class="form-group">
+            <label for="location">Where did you buy it?:</label><br>
+            {{ form.location(class="col-md-4") }}
+            {% for error in form.errors.location %}
+            <small>[{{ error }}]</small>
+            {% endfor %}<br>
+        </div>
+         
         <div class="form-group">
             <label for="price">Price:</label><br>
             {{ form.price(size=20, class="col-md-4") }}
             {% for error in form.errors.price %}
-            <small>[{{ error }}]</small>
-            {% endfor %}<br>
-        </div>
-        
-        <div class="form-group">
-            <label for="location">Where do you buy it?:</label><br>
-            {{ form.location(class="col-md-4") }}
-            {% for error in form.errors.location %}
             <small>[{{ error }}]</small>
             {% endfor %}<br>
         </div>
@@ -46,7 +46,7 @@
 </div>
 
 {% for item in items %}
-    {% include "item.html" %}
+{% include "item.html" %}
 {% endfor %}
  
 {% endblock %}

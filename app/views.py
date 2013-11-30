@@ -1,10 +1,39 @@
-from flask import render_template, flash, redirect, url_for, session, g
+from flask import render_template, flash, redirect, url_for, session, g, request, jsonify
 from flask.ext.login import login_user, logout_user, current_user
 from app import app, db, lm
 from models import User, Item, User_location, Item_location
-from forms import LoginForm, ItemForm
+from forms import LoginForm, ItemForm, SearchForm
 from datetime import datetime
 from werkzeug import generate_password_hash, check_password_hash
+
+# TEMP FUNCTION!
+def setloc(data, itemOrUser):
+    if itemOrUser == 'item':
+        
+        location = Item_location.query.filter_by(name=data).first()
+
+        if location is None:
+            
+            location = Item_location( name = data
+                                    , latitude = 0
+                                    , longitude = 0
+                                    , description = "temp"
+                                    )
+    else: 
+        location = Item_location.query.filter_by(name=data).first()
+
+        if location is None:
+            
+            location = User_location( name = data
+                                    , latitude = 0
+                                    , longitude = 0
+                                    , description = "temp"
+                                    )
+    db.session.add(location)
+    db.session.commit()
+
+    return location.id
+
 
 
 @lm.user_loader
@@ -35,8 +64,8 @@ def index():
 
         item = Item( name = form.name.data
                    , price = form.price.data
-                   , location_id = form.location.data
-                   , description = form.description.data 
+                   , location_id = setloc(form.location.data, 'item')
+                   , description = form.description.data
                    , user = user)
 
         db.session.add(item)
@@ -47,7 +76,7 @@ def index():
         return redirect(url_for("index"))
 
 
-    items = Item.query.all()[::-1]
+    items = Item.query.order_by('rating').all()[::-1]
 
     return render_template( "index.html"
                           , form = form
@@ -76,10 +105,10 @@ def login():
         user = User.query.filter_by(email=email).first()
 
         if user == None:
-            user = User( username=username
-                       , email=email
-                       , password=password
-                       , location_id=form.location.data )
+            user = User( username = username
+                       , email = email
+                       , password = password
+                       , location_id = setloc(form.location.data, 'user') )
 
             db.session.add(user)
             db.session.commit()
@@ -107,3 +136,59 @@ def logout():
     logout_user()
     return redirect(url_for("index"))
 
+
+
+@app.route("/search", methods=["GET", "POST"])
+def search():
+    
+    title = "Search"
+
+    form = SearchForm()
+    
+    if form.validate_on_submit():
+        query = form.query.data
+        items = Item.query.search(query).all()
+
+    else:
+        items = []
+
+    return render_template( "search.html"
+                          , form = form
+                          , title = title 
+                          , items = items )
+
+
+@app.route("/vote/<type>/<int:id>")
+def vote(type, id):
+    
+      item = Item.query.get(id)
+
+      if type == 'like':
+          item.likes += 1
+      else:
+          item.dislikes += 1
+
+      item.rating = item.likes - item.dislikes
+      
+      db.session.commit()
+
+      return redirect(url_for("index"))
+
+
+@app.route("/remove_vote/<type>/<int:id>")
+def remove_vote(type, id):
+    
+      item = Item.query.get(id)
+
+      if type == 'like':
+          item.likes -= 1
+          item.rating -= 1
+      else:
+          item.dislikes -= 1
+          item.rating += 1
+
+      item.rating = item.likes - item.dislikes
+      
+      db.session.commit()
+      
+      return redirect(url_for("index"))
